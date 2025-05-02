@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Signup</title>
+    <style>
+        button {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Activity Signup</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2>Sign Up for an Activity</h2>
+            <form id="signup-form">
+                <label for="activity">Activity:</label>
+                <input type="text" id="activity" name="activity" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            <p id="signup-message"></p>
+        </section>
+
+        <section>
+            <h2>Cancel Activity Signup</h2>
+            <form id="cancel-signup-form">
+                <label for="activity-name">Activity Name:</label>
+                <input type="text" id="activity-name" name="activity-name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <button type="submit">Cancel Signup</button>
+            </form>
+            <p id="cancel-message"></p>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById("signup-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const activity = document.getElementById("activity").value;
+            const email = document.getElementById("email").value;
+
+            try {
+                const response = await fetch(`/activities/${activity}/signup?email=${encodeURIComponent(email)}`, {
+                    method: "POST",
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById("signup-message").textContent = result.message;
+                    setTimeout(() => location.reload(), 1000); // Refresh the page after 1 second
+                } else {
+                    document.getElementById("signup-message").textContent = result.detail;
+                }
+            } catch (error) {
+                document.getElementById("signup-message").textContent = "An error occurred.";
+            }
+        });
+
+        document.getElementById("cancel-signup-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const activityName = document.getElementById("activity-name").value;
+            const email = document.getElementById("email").value;
+
+            try {
+                const response = await fetch(`/activities/${activityName}/cancel?email=${encodeURIComponent(email)}`, {
+                    method: "DELETE",
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById("cancel-message").textContent = result.message;
+                    setTimeout(() => location.reload(), 1000); // Refresh the page after 1 second
+                } else {
+                    document.getElementById("cancel-message").textContent = result.detail;
+                }
+            } catch (error) {
+                document.getElementById("cancel-message").textContent = "An error occurred.";
+            }
+        });
+    </script>
+</body>
+</html>
